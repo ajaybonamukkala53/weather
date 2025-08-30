@@ -1,5 +1,4 @@
 // netlify/functions/weather.js
-const fetch = require("node-fetch");
 
 exports.handler = async (event) => {
   try {
@@ -12,15 +11,16 @@ exports.handler = async (event) => {
       };
     }
 
-    const API_KEY = process.env.WEATHER_API_KEY; // store in Netlify environment variables
+    const API_KEY = process.env.WEATHER_API_KEY;
     const url = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(
       city
     )}&appid=${API_KEY}&units=metric`;
 
+    // ✅ Use built-in fetch (no node-fetch needed)
     const response = await fetch(url);
     const weatherData = await response.json();
 
-    if (response.status !== 200) {
+    if (!response.ok) {
       return {
         statusCode: response.status,
         body: JSON.stringify({ error: weatherData.message || "City not found" }),
